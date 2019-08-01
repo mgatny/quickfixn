@@ -21,37 +21,6 @@ namespace QuickFix
                 this.NewSeqNo = aNewSeqNo;
             }
 
-            public QuickFix.Fields.GapFillFlag GapFillFlag
-            { 
-                get 
-                {
-                    QuickFix.Fields.GapFillFlag val = new QuickFix.Fields.GapFillFlag();
-                    GetField(val);
-                    return val;
-                }
-                set { SetField(value); }
-            }
-            
-            public void Set(QuickFix.Fields.GapFillFlag val) 
-            { 
-                this.GapFillFlag = val;
-            }
-            
-            public QuickFix.Fields.GapFillFlag Get(QuickFix.Fields.GapFillFlag val) 
-            { 
-                GetField(val);
-                return val;
-            }
-            
-            public bool IsSet(QuickFix.Fields.GapFillFlag val) 
-            { 
-                return IsSetGapFillFlag();
-            }
-            
-            public bool IsSetGapFillFlag() 
-            { 
-                return IsSetField(Tags.GapFillFlag);
-            }
             public QuickFix.Fields.NewSeqNo NewSeqNo
             { 
                 get 
@@ -82,6 +51,37 @@ namespace QuickFix
             public bool IsSetNewSeqNo() 
             { 
                 return IsSetField(Tags.NewSeqNo);
+            }
+            public QuickFix.Fields.GapFillFlag GapFillFlag
+            { 
+                get 
+                {
+                    QuickFix.Fields.GapFillFlag val = new QuickFix.Fields.GapFillFlag();
+                    GetField(val);
+                    return val;
+                }
+                set { SetField(value); }
+            }
+            
+            public void Set(QuickFix.Fields.GapFillFlag val) 
+            { 
+                this.GapFillFlag = val;
+            }
+            
+            public QuickFix.Fields.GapFillFlag Get(QuickFix.Fields.GapFillFlag val) 
+            { 
+                GetField(val);
+                return val;
+            }
+            
+            public bool IsSet(QuickFix.Fields.GapFillFlag val) 
+            { 
+                return IsSetGapFillFlag();
+            }
+            
+            public bool IsSetGapFillFlag() 
+            { 
+                return IsSetField(Tags.GapFillFlag);
             }
         }
     }

@@ -319,9 +319,9 @@ namespace QuickFix.Fields
         public const string EXECUTE_AS_DURATION_NEUTRAL = "s";
         public const string EXECUTE_AS_FX_NEUTRAL = "t";
         public const string REINSTATE_ON_SYSTEM_FAILUE = "H";
+        public const string STAY_ON_OFFERSIDE = "0";
         public const string PARTICIPATE_DONT_INITIATE = "6";
         public const string STAY_ON_BIDSIDE = "9";
-        public const string STAY_ON_OFFERSIDE = "0";
         public const string MID_PRICE = "M";
         public const string FIXED_PEG = "T";
         public const string DO_NOT_INCREASE_DNI = "E";
@@ -3096,12 +3096,15 @@ namespace QuickFix.Fields
         public const string FX_FORWARD = "FXFWD";
         public const string FX_SWAP = "FXSWAP";
         public const string WILDCARD_ENTRY = "WLD";
-        public const string US_TREASURY_NOTE = "TNOTE";
-        public const string US_TREASURY_BILL = "TBILL";
-        public const string AMENDED_AND_RESTATED = "AMENDED";
-        public const string TAX_AND_REVENUE_ANTICIPATION_NOTE = "TRAN";
-        public const string MULTI_LEG_INSTRUMENT = "MLEG";
         public const string WILDCARD = "?";
+        public const string AMENDED_AND_RESTATED = "AMENDED";
+        public const string MULTI_LEG_INSTRUMENT = "MLEG";
+        public const string US_TREASURY_BILL = "TBILL";
+        public const string US_TREASURY_NOTE = "TNOTE";
+        public const string TAX_AND_REVENUE_ANTICIPATION_NOTE = "TRAN";
+        public const string US_TREASURY_NOTE2 = "UST";
+        public const string US_TREASURY_BILL2 = "USTB";
+        public const string _UNKNOWN = "WLD";
         public const string CONVERTABLE_BOND = "CB";
         public const string INDEX_LINKED = "XLINKD";
         public const string PREFERED_STOCK = "PS";
@@ -4232,6 +4235,10 @@ namespace QuickFix.Fields
         public const string MEDIAN_PRICE = "5";
         public const string FULL_CURVE = "6";
         public const string FLAT_CURVE = "7";
+        public const string NO_MARKET_ACTIVITY = "1000";
+        public const string NO_DATA_AVAILABLE = "1001";
+        public const string NOT_APPLICABLE = "1002";
+        public const string AMOUNT_THRESHOLD_EXCEEDED = "1003";
         public const string OPEN = "A";
         public const string CLOSED = "B";
         public const string NONFIRM = "I";
@@ -4331,6 +4338,11 @@ namespace QuickFix.Fields
         public const string NEXT_DAY_MARKET = "D";
         public const string RULE127 = "G";
         public const string RULE155 = "H";
+        public const string CROSSED = "X";
+        public const string CROSSED2 = "AO";
+        public const string NO_MARKET_ACTIVITY = "1000";
+        public const string NO_DATA_AVAILABLE = "1001";
+        public const string NOT_APPLICABLE = "1002";
         public const string OPENING = "E";
     }
 
@@ -4940,10 +4952,6 @@ namespace QuickFix.Fields
         public UnderlyingPutOrCall(int val)
             :base(Tags.UnderlyingPutOrCall, val) {}
 
-
-        // Field Enumerations
-        public const int PUT = 0;
-        public const int CALL = 1;
     }
 
 
@@ -5142,10 +5150,10 @@ namespace QuickFix.Fields
         public const int PRE_CROSS = 24;
         public const int CROSS = 25;
         public const int POST_CLOSE = 26;
-        public const int NO_OPEN_NO_RESUME = 4;
         public const int NOT_ASSIGNED = 11;
         public const int READY_TO_TRADE_START_OF_SESSION = 17;
         public const int NOT_AVAILABLE_FOR_TRADING_END_OF_SESSION = 18;
+        public const int NO_OPEN_NO_RESUME = 4;
         public const int NO_OPENNO_RESUME = 4;
         public const int ITS_PREOPENING = 14;
     }
@@ -5163,12 +5171,12 @@ namespace QuickFix.Fields
 
 
         // Field Enumerations
-        public const char ORDER_IMBALANCE = 'I';
-        public const char EQUIPMENT_CHANGEOVER = 'X';
-        public const char NEWS_PENDING = 'P';
         public const char NEWS_DISSEMINATION = 'D';
         public const char ORDER_INFLUX = 'E';
+        public const char ORDER_IMBALANCE = 'I';
         public const char ADDITIONAL_INFORMATION = 'M';
+        public const char NEWS_PENDING = 'P';
+        public const char EQUIPMENT_CHANGEOVER = 'X';
     }
 
 
@@ -7093,6 +7101,7 @@ namespace QuickFix.Fields
         public const string MEDIUM = "M";
         public const string LARGE = "L";
         public const string UNDISCLOSED_QUANTITY = "U";
+        public const string _1000000000 = "0";
     }
 
 
@@ -7931,12 +7940,13 @@ namespace QuickFix.Fields
         public const char MIC = 'G';
         public const char CSD_PARTICIPANT_MEMBER_CODE = 'H';
         public const char DIRECTED_BROKER_THREE_CHARACTER_ACRONYM_AS_DEFINED_IN_ISITC_ETC_BEST_PRACTICE_GUIDELINES_DOCUMENT = 'I';
-        public const char PROPRIETARY_CUSTOM_CODE = 'D';
         public const char TAIWANESE_TRADING_ACCOUNT = '3';
         public const char MALAYSIAN_CENTRAL_DEPOSITORY_NUMBER = '4';
         public const char CHINESE_B_SHARE = '5';
         public const char US_EMPLOYER_IDENTIFICATION_NUMBER = '8';
+        public const char PROPRIETARY_CUSTOM_CODE = 'D';
         public const char DIRECTED_BROKER = 'I';
+        public const char SHORT_CODE_IDENTIFIER = 'P';
         public const char TAIWANESE_QUALIFIED_FOREIGN_INVESTOR_ID_QFII = '2';
     }
 
@@ -8469,7 +8479,6 @@ namespace QuickFix.Fields
         public const int DIRECT_CREDIT = 8;
         public const int ACH_CREDIT = 9;
         public const int FEDWIRE = 7;
-        public const int HIGH_VALUE_CLEARING_SYSTEM = 11;
     }
 
 
@@ -8798,6 +8807,20 @@ namespace QuickFix.Fields
         public const int OTHER = 999;
         public const int NONE = 0;
         public const int EMPLOYEE_PRIOR_YEAR = 9;
+        public const int EMPLOYEE = 10;
+        public const int EMPLOYER = 11;
+        public const int EMPLOYER2 = 12;
+        public const int INDIVIDUAL_RETIREMENT_ACCOUNT = 16;
+        public const int INDIVIDUAL_RETIREMENT_ACCOUNT2 = 17;
+        public const int _401_K = 20;
+        public const int _403_B = 22;
+        public const int _457 = 23;
+        public const int ROTH_IRA = 24;
+        public const int ROTH_IRA2 = 25;
+        public const int ROTH_CONVERSION_IRA = 26;
+        public const int ROTH_CONVERSION_IRA2 = 27;
+        public const int EDUCATION_IRA = 28;
+        public const int EDUCATION_IRA2 = 29;
     }
 
 
@@ -9178,6 +9201,8 @@ namespace QuickFix.Fields
         public const int DILUTION_LEVY_AMOUNT = 7;
         public const int DILUTION_LEVY_PERCENT = 8;
         public const int EXIT_CHARGE_AMOUNT = 9;
+        public const int FUND_BASED_RENEWAL_COMMISSION_AMOUNT = 13;
+        public const int FUND_BASED_RENEWAL_COMMISSION_AMOUNT2 = 14;
     }
 
 
@@ -10107,6 +10132,14 @@ namespace QuickFix.Fields
         public const string CROSS_AUCTION_5 = "5";
         public const string COUNTER_ORDER_SELECTION_6 = "6";
         public const string CALL_AUCTION_7 = "7";
+        public const string EXACT_PLUS_FOUR_BADGES_AND_EXECUTION_TIME = "A1";
+        public const string EXACT_PLUS_FOUR_BADGES = "A2";
+        public const string EXACT_PLUS_TWO_BADGES_AND_EXECUTION_TIME = "A3";
+        public const string EXACT_PLUS_TWO_BADGES = "A4";
+        public const string EXACT_PLUS_EXECUTION_TIME = "A5";
+        public const string CROSS_AUCTION2 = "63";
+        public const string COUNTER_ORDER_SELECTION2 = "64";
+        public const string CALL_AUCTION2 = "65";
         public const string EXACT_MATCH_PLUS_FOUR_BADGES_AND_EXECUTION_TIME = "A1";
         public const string EXACT_MATCH_PLUS_FOUR_BADGES = "A2";
         public const string EXACT_MATCH_PLUS_TWO_BADGES_AND_EXECUTION_TIME = "A3";
@@ -10183,7 +10216,6 @@ namespace QuickFix.Fields
         public const int EXCLUDE_FROM_CENTRAL_COUNTERPARTY = 7;
         public const int MANUAL_MODE = 8;
         public const int AUTOMATIC_POSTING_MODE = 9;
-        public const int QUALIFIED_SERVICE_REPRESENTATIVE = 11;
     }
 
 
@@ -11037,6 +11069,12 @@ namespace QuickFix.Fields
         public const string ALL_OTHER_OWNERSHIP_TYPES = "M";
         public const string FIRMS_106H_AND_106J = "H";
         public const string LESSEE_AND_106F_EMPLOYEES = "L";
+        public const string _1ST_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "1";
+        public const string _2ND_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "2";
+        public const string _3RD_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "3";
+        public const string _4TH_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "4";
+        public const string _5TH_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "5";
+        public const string _6TH_YEAR_DELEGATE_TRADING_FOR_OWN_ACCOUNT = "9";
     }
 
 
@@ -11382,6 +11420,19 @@ namespace QuickFix.Fields
             :base(Tags.SideComplianceID) {}
         public SideComplianceID(string val)
             :base(Tags.SideComplianceID, val) {}
+
+    }
+
+
+    /// <summary>
+    /// NoLinesOfText Field
+    /// </summary>/
+    public sealed class NoLinesOfText : IntField
+    {
+        public NoLinesOfText()
+            :base(Tags.NoLinesOfText) {}
+        public NoLinesOfText(int val)
+            :base(Tags.NoLinesOfText, val) {}
 
     }
 
@@ -12977,7 +13028,6 @@ namespace QuickFix.Fields
         public const int OTHER = 99;
         public const int UNAUTHORIZED_ROR_TRADE_CAPTURE_REPORT_REQUEST = 9;
         public const int UNAUTHORIZED_FOR_TRADE_CAPTURE_REPORT_REQUEST = 9;
-        public const int YIELD = 10;
     }
 
 
@@ -13018,7 +13068,6 @@ namespace QuickFix.Fields
         public const int INVALID_TRADE_TYPE = 4;
         public const int OTHER = 99;
         public const int INVALID_PARTY_INFORMATION = 1;
-        public const int YIELD = 10;
     }
 
 
@@ -13820,6 +13869,8 @@ namespace QuickFix.Fields
         public const int LOCATION = 31;
         public const int EXECUTION_VENUE = 32;
         public const int CURRENCY_DELIVERY_IDENTIFIER = 33;
+        public const int REGISTERED_ADDRESS = 12;
+        public const int REGISTERED_ADDRESS2 = 18;
     }
 
 
@@ -14229,6 +14280,7 @@ namespace QuickFix.Fields
         public const int OTC = 54;
         public const int EXCHANGE_BASIS_FACILITY = 55;
         public const int BLOCK_TRADE = 1;
+        public const int BLOCK_TRADE2 = 38;
     }
 
 
@@ -14736,6 +14788,7 @@ namespace QuickFix.Fields
         public const int ALLEGED_15 = 15;
         public const int ALLEGED = 1;
         public const int LOCKED_IN_TRADE_BREAK = 7;
+        public const int ALLEGED2 = 15;
     }
 
 
@@ -15048,6 +15101,8 @@ namespace QuickFix.Fields
         public const int VAL_3 = 1;
         public const int VAL_4 = 2;
         public const int OTHER = 99;
+        public const int _3_A = 1;
+        public const int _4_2 = 2;
     }
 
 
@@ -16251,53 +16306,6 @@ namespace QuickFix.Fields
 
 
     /// <summary>
-    /// IOIID Field
-    /// </summary>/
-    public sealed class IOIID : StringField
-    {
-        public IOIID()
-            :base(Tags.IOIID) {}
-        public IOIID(string val)
-            :base(Tags.IOIID, val) {}
-
-    }
-
-
-    /// <summary>
-    /// NoLinesOfText Field
-    /// </summary>/
-    public sealed class NoLinesOfText : IntField
-    {
-        public NoLinesOfText()
-            :base(Tags.NoLinesOfText) {}
-        public NoLinesOfText(int val)
-            :base(Tags.NoLinesOfText, val) {}
-
-    }
-
-
-    /// <summary>
-    /// HaltReasonChar Field
-    /// </summary>/
-    public sealed class HaltReasonChar : CharField
-    {
-        public HaltReasonChar()
-            :base(Tags.HaltReasonChar) {}
-        public HaltReasonChar(char val)
-            :base(Tags.HaltReasonChar, val) {}
-
-
-        // Field Enumerations
-        public const char NEWS_DISSEMINATION = 'D';
-        public const char ORDER_INFLUX = 'E';
-        public const char ORDER_IMBALANCE = 'I';
-        public const char ADDITIONAL_INFORMATION = 'M';
-        public const char NEW_PENDING = 'P';
-        public const char EQUIPMENT_CHANGEOVER = 'X';
-    }
-
-
-    /// <summary>
     /// NoStrategyParameters Field
     /// </summary>/
     public sealed class NoStrategyParameters : IntField
@@ -16440,14 +16448,14 @@ namespace QuickFix.Fields
 
 
     /// <summary>
-    /// SecurityStat Field
+    /// SecurityStatus Field
     /// </summary>/
-    public sealed class SecurityStat : StringField
+    public sealed class SecurityStatus : StringField
     {
-        public SecurityStat()
-            :base(Tags.SecurityStat) {}
-        public SecurityStat(string val)
-            :base(Tags.SecurityStat, val) {}
+        public SecurityStatus()
+            :base(Tags.SecurityStatus) {}
+        public SecurityStatus(string val)
+            :base(Tags.SecurityStatus, val) {}
 
 
         // Field Enumerations
@@ -16592,6 +16600,9 @@ namespace QuickFix.Fields
         public const int T_PLUS_1 = 2;
         public const int T_PLUS_3 = 4;
         public const int T_PLUS_4 = 5;
+        public const int Tp1 = 2;
+        public const int Tp3 = 4;
+        public const int Tp4 = 5;
     }
 
 
@@ -18951,14 +18962,439 @@ namespace QuickFix.Fields
 
 
     /// <summary>
-    /// SecurityStatus Field
+    /// SessionStatus Field
     /// </summary>/
-    public sealed class SecurityStatus : StringField
+    public sealed class SessionStatus : IntField
     {
-        public SecurityStatus()
-            :base(Tags.SecurityStatus) {}
-        public SecurityStatus(string val)
-            :base(Tags.SecurityStatus, val) {}
+        public SessionStatus()
+            :base(Tags.SessionStatus) {}
+        public SessionStatus(int val)
+            :base(Tags.SessionStatus, val) {}
+
+
+        // Field Enumerations
+        public const int SESSION_ACTIVE = 0;
+        public const int SESSION_PASSWORD_CHANGED = 1;
+        public const int SESSION_PASSWORD_DUE_TO_EXPIRE = 2;
+        public const int NEW_SESSION_PASSWORD_DOES_NOT_COMPLY_WITH_POLICY = 3;
+        public const int SESSION_LOGOUT_COMPLETE = 4;
+        public const int INVALID_USERNAME_OR_PASSWORD = 5;
+        public const int ACCOUNT_LOCKED = 6;
+        public const int LOGONS_ARE_NOT_ALLOWED_AT_THIS_TIME = 7;
+        public const int PASSWORD_EXPIRED = 8;
+    }
+
+
+    /// <summary>
+    /// LegMidPx Field
+    /// </summary>/
+    public sealed class LegMidPx : DecimalField
+    {
+        public LegMidPx()
+            :base(Tags.LegMidPx) {}
+        public LegMidPx(Decimal val)
+            :base(Tags.LegMidPx, val) {}
+
+    }
+
+
+    /// <summary>
+    /// MDElementName Field
+    /// </summary>/
+    public sealed class MDElementName : IntField
+    {
+        public MDElementName()
+            :base(Tags.MDElementName) {}
+        public MDElementName(int val)
+            :base(Tags.MDElementName, val) {}
+
+
+        // Field Enumerations
+        public const int BEST_BID = 1;
+        public const int BEST_OFFER = 2;
+        public const int PAID = 11;
+        public const int GIVEN = 12;
+        public const int DEALABLE_BID = 45;
+        public const int DEALABLE_OFFER = 46;
+        public const int LOCAL_BID = 47;
+        public const int LOCAL_OFFER = 48;
+        public const int DEALABLE_REGULAR_BID = 49;
+        public const int DEALABLE_REGULAR_OFFER = 50;
+        public const int DEALABLE_OUTSIDE_BID = 51;
+        public const int DEALABLE_OUTSIDE_OFFER = 52;
+        public const int DEALABLE_PLUS_BID = 53;
+        public const int DEALABLE_PLUS_OFFER = 54;
+    }
+
+
+    /// <summary>
+    /// BidPx2 Field
+    /// </summary>/
+    public sealed class BidPx2 : DecimalField
+    {
+        public BidPx2()
+            :base(Tags.BidPx2) {}
+        public BidPx2(Decimal val)
+            :base(Tags.BidPx2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// OfferPx2 Field
+    /// </summary>/
+    public sealed class OfferPx2 : DecimalField
+    {
+        public OfferPx2()
+            :base(Tags.OfferPx2) {}
+        public OfferPx2(Decimal val)
+            :base(Tags.OfferPx2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// LastPx2 Field
+    /// </summary>/
+    public sealed class LastPx2 : DecimalField
+    {
+        public LastPx2()
+            :base(Tags.LastPx2) {}
+        public LastPx2(Decimal val)
+            :base(Tags.LastPx2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// RequestType Field
+    /// </summary>/
+    public sealed class RequestType : StringField
+    {
+        public RequestType()
+            :base(Tags.RequestType) {}
+        public RequestType(string val)
+            :base(Tags.RequestType, val) {}
+
+
+        // Field Enumerations
+        public const string HEDGING_REQUEST = "HEDGE";
+        public const string REQUEST_FOR_QUOTE = "RFQ";
+        public const string REQUEST_FOR_STREAMING_QUOTE = "RFSQ";
+    }
+
+
+    /// <summary>
+    /// MidPx2 Field
+    /// </summary>/
+    public sealed class MidPx2 : DecimalField
+    {
+        public MidPx2()
+            :base(Tags.MidPx2) {}
+        public MidPx2(Decimal val)
+            :base(Tags.MidPx2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TenorCode Field
+    /// </summary>/
+    public sealed class TenorCode : StringField
+    {
+        public TenorCode()
+            :base(Tags.TenorCode) {}
+        public TenorCode(string val)
+            :base(Tags.TenorCode, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TenorCode2 Field
+    /// </summary>/
+    public sealed class TenorCode2 : StringField
+    {
+        public TenorCode2()
+            :base(Tags.TenorCode2) {}
+        public TenorCode2(string val)
+            :base(Tags.TenorCode2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// SimulatedTime Field
+    /// </summary>/
+    public sealed class SimulatedTime : DateTimeField
+    {
+        public SimulatedTime()
+            :base(Tags.SimulatedTime) {}
+        public SimulatedTime(DateTime val)
+            :base(Tags.SimulatedTime, val) {}
+        public SimulatedTime(DateTime val, bool showMilliseconds)
+            :base(Tags.SimulatedTime, val, showMilliseconds) {}
+		public SimulatedTime(DateTime val, Converters.TimeStampPrecision precision)
+            :base(Tags.SimulatedTime, val, precision) {}
+
+    }
+
+
+    /// <summary>
+    /// NoNestedUserData Field
+    /// </summary>/
+    public sealed class NoNestedUserData : IntField
+    {
+        public NoNestedUserData()
+            :base(Tags.NoNestedUserData) {}
+        public NoNestedUserData(int val)
+            :base(Tags.NoNestedUserData, val) {}
+
+    }
+
+
+    /// <summary>
+    /// NestedUserDataName Field
+    /// </summary>/
+    public sealed class NestedUserDataName : StringField
+    {
+        public NestedUserDataName()
+            :base(Tags.NestedUserDataName) {}
+        public NestedUserDataName(string val)
+            :base(Tags.NestedUserDataName, val) {}
+
+    }
+
+
+    /// <summary>
+    /// NestedUserDataValue Field
+    /// </summary>/
+    public sealed class NestedUserDataValue : StringField
+    {
+        public NestedUserDataValue()
+            :base(Tags.NestedUserDataValue) {}
+        public NestedUserDataValue(string val)
+            :base(Tags.NestedUserDataValue, val) {}
+
+    }
+
+
+    /// <summary>
+    /// SpotValueDateForNDF Field
+    /// </summary>/
+    public sealed class SpotValueDateForNDF : StringField
+    {
+        public SpotValueDateForNDF()
+            :base(Tags.SpotValueDateForNDF) {}
+        public SpotValueDateForNDF(string val)
+            :base(Tags.SpotValueDateForNDF, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderBidSpotRate Field
+    /// </summary>/
+    public sealed class TraderBidSpotRate : DecimalField
+    {
+        public TraderBidSpotRate()
+            :base(Tags.TraderBidSpotRate) {}
+        public TraderBidSpotRate(Decimal val)
+            :base(Tags.TraderBidSpotRate, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderOfferSpotRate Field
+    /// </summary>/
+    public sealed class TraderOfferSpotRate : DecimalField
+    {
+        public TraderOfferSpotRate()
+            :base(Tags.TraderOfferSpotRate) {}
+        public TraderOfferSpotRate(Decimal val)
+            :base(Tags.TraderOfferSpotRate, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderSpotMidPx Field
+    /// </summary>/
+    public sealed class TraderSpotMidPx : DecimalField
+    {
+        public TraderSpotMidPx()
+            :base(Tags.TraderSpotMidPx) {}
+        public TraderSpotMidPx(Decimal val)
+            :base(Tags.TraderSpotMidPx, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderForwardBidPoints Field
+    /// </summary>/
+    public sealed class TraderForwardBidPoints : DecimalField
+    {
+        public TraderForwardBidPoints()
+            :base(Tags.TraderForwardBidPoints) {}
+        public TraderForwardBidPoints(Decimal val)
+            :base(Tags.TraderForwardBidPoints, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderForwardOfferPoints Field
+    /// </summary>/
+    public sealed class TraderForwardOfferPoints : DecimalField
+    {
+        public TraderForwardOfferPoints()
+            :base(Tags.TraderForwardOfferPoints) {}
+        public TraderForwardOfferPoints(Decimal val)
+            :base(Tags.TraderForwardOfferPoints, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderForwardMidPoints Field
+    /// </summary>/
+    public sealed class TraderForwardMidPoints : DecimalField
+    {
+        public TraderForwardMidPoints()
+            :base(Tags.TraderForwardMidPoints) {}
+        public TraderForwardMidPoints(Decimal val)
+            :base(Tags.TraderForwardMidPoints, val) {}
+
+    }
+
+
+    /// <summary>
+    /// SalesMarkupNotional Field
+    /// </summary>/
+    public sealed class SalesMarkupNotional : DecimalField
+    {
+        public SalesMarkupNotional()
+            :base(Tags.SalesMarkupNotional) {}
+        public SalesMarkupNotional(Decimal val)
+            :base(Tags.SalesMarkupNotional, val) {}
+
+    }
+
+
+    /// <summary>
+    /// SalesMarkupPercentage Field
+    /// </summary>/
+    public sealed class SalesMarkupPercentage : DecimalField
+    {
+        public SalesMarkupPercentage()
+            :base(Tags.SalesMarkupPercentage) {}
+        public SalesMarkupPercentage(Decimal val)
+            :base(Tags.SalesMarkupPercentage, val) {}
+
+    }
+
+
+    /// <summary>
+    /// PartyRoleQualifier Field
+    /// </summary>/
+    public sealed class PartyRoleQualifier : IntField
+    {
+        public PartyRoleQualifier()
+            :base(Tags.PartyRoleQualifier) {}
+        public PartyRoleQualifier(int val)
+            :base(Tags.PartyRoleQualifier, val) {}
+
+
+        // Field Enumerations
+        public const int ALGORITHM = 22;
+        public const int NATURAL_PERSON = 24;
+    }
+
+
+    /// <summary>
+    /// TraderForwardBidPoints2 Field
+    /// </summary>/
+    public sealed class TraderForwardBidPoints2 : DecimalField
+    {
+        public TraderForwardBidPoints2()
+            :base(Tags.TraderForwardBidPoints2) {}
+        public TraderForwardBidPoints2(Decimal val)
+            :base(Tags.TraderForwardBidPoints2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// TraderForwardOfferPoints2 Field
+    /// </summary>/
+    public sealed class TraderForwardOfferPoints2 : DecimalField
+    {
+        public TraderForwardOfferPoints2()
+            :base(Tags.TraderForwardOfferPoints2) {}
+        public TraderForwardOfferPoints2(Decimal val)
+            :base(Tags.TraderForwardOfferPoints2, val) {}
+
+    }
+
+
+    /// <summary>
+    /// MarketSegmentID Field
+    /// </summary>/
+    public sealed class MarketSegmentID : StringField
+    {
+        public MarketSegmentID()
+            :base(Tags.MarketSegmentID) {}
+        public MarketSegmentID(string val)
+            :base(Tags.MarketSegmentID, val) {}
+
+    }
+
+
+    /// <summary>
+    /// IOIID Field
+    /// </summary>/
+    public sealed class IOIID : StringField
+    {
+        public IOIID()
+            :base(Tags.IOIID) {}
+        public IOIID(string val)
+            :base(Tags.IOIID, val) {}
+
+    }
+
+
+    /// <summary>
+    /// HaltReasonChar Field
+    /// </summary>/
+    public sealed class HaltReasonChar : CharField
+    {
+        public HaltReasonChar()
+            :base(Tags.HaltReasonChar) {}
+        public HaltReasonChar(char val)
+            :base(Tags.HaltReasonChar, val) {}
+
+
+        // Field Enumerations
+        public const char NEWS_DISSEMINATION = 'D';
+        public const char ORDER_INFLUX = 'E';
+        public const char ORDER_IMBALANCE = 'I';
+        public const char ADDITIONAL_INFORMATION = 'M';
+        public const char NEW_PENDING = 'P';
+        public const char EQUIPMENT_CHANGEOVER = 'X';
+    }
+
+
+    /// <summary>
+    /// SecurityStat Field
+    /// </summary>/
+    public sealed class SecurityStat : StringField
+    {
+        public SecurityStat()
+            :base(Tags.SecurityStat) {}
+        public SecurityStat(string val)
+            :base(Tags.SecurityStat, val) {}
 
 
         // Field Enumerations
@@ -21139,19 +21575,6 @@ namespace QuickFix.Fields
 
 
     /// <summary>
-    /// MarketSegmentID Field
-    /// </summary>/
-    public sealed class MarketSegmentID : StringField
-    {
-        public MarketSegmentID()
-            :base(Tags.MarketSegmentID) {}
-        public MarketSegmentID(string val)
-            :base(Tags.MarketSegmentID, val) {}
-
-    }
-
-
-    /// <summary>
     /// MarketID Field
     /// </summary>/
     public sealed class MarketID : StringField
@@ -22680,30 +23103,6 @@ namespace QuickFix.Fields
         public DefaultCstmApplVerID(string val)
             :base(Tags.DefaultCstmApplVerID, val) {}
 
-    }
-
-
-    /// <summary>
-    /// SessionStatus Field
-    /// </summary>/
-    public sealed class SessionStatus : IntField
-    {
-        public SessionStatus()
-            :base(Tags.SessionStatus) {}
-        public SessionStatus(int val)
-            :base(Tags.SessionStatus, val) {}
-
-
-        // Field Enumerations
-        public const int SESSION_ACTIVE = 0;
-        public const int SESSION_PASSWORD_CHANGED = 1;
-        public const int SESSION_PASSWORD_DUE_TO_EXPIRE = 2;
-        public const int NEW_SESSION_PASSWORD_DOES_NOT_COMPLY_WITH_POLICY = 3;
-        public const int SESSION_LOGOUT_COMPLETE = 4;
-        public const int INVALID_USERNAME_OR_PASSWORD = 5;
-        public const int ACCOUNT_LOCKED = 6;
-        public const int LOGONS_ARE_NOT_ALLOWED_AT_THIS_TIME = 7;
-        public const int PASSWORD_EXPIRED = 8;
     }
 
 
