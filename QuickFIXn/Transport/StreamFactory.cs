@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +17,49 @@ namespace QuickFix.Transport
     /// </summary>
     public static class StreamFactory
     {
+        private static Socket CreateTunnelThruProxy(string destIP, int destPort)
+        {
+            string destUriWithPort = $"{destIP}:{destPort}";
+            UriBuilder uriBuilder = new UriBuilder(destUriWithPort);
+            Uri destUri = uriBuilder.Uri;
+            IWebProxy webProxy = WebRequest.GetSystemWebProxy();
+
+            try
+            {
+                if (webProxy.IsBypassed(destUri))
+                    return null;
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // .NET Core doesn't support IWebProxy.IsBypassed
+                // (because .NET Core doesn't have access to Windows-specific services, of course)
+                return null;
+            }
+
+            Uri proxyUri = webProxy.GetProxy(destUri);
+            IPAddress[] proxyEntry = Dns.GetHostAddresses(proxyUri.Host);
+            int iPort = proxyUri.Port;
+            IPAddress address = proxyEntry.First(a => a.AddressFamily == AddressFamily.InterNetwork);
+            IPEndPoint proxyEndPoint = new IPEndPoint(address, iPort);
+            Socket socketThruProxy = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socketThruProxy.Connect(proxyEndPoint);
+
+            string proxyMsg = $"CONNECT {destIP}:{destPort} HTTP/1.1 \n\n";
+            byte[] buffer = Encoding.ASCII.GetBytes(proxyMsg);
+            byte[] buffer12 = new byte[500];
+            socketThruProxy.Send(buffer, buffer.Length, 0);
+            int msg = socketThruProxy.Receive(buffer12, 500, 0);
+            string data;
+            data = Encoding.ASCII.GetString(buffer12);
+            int index = data.IndexOf("200");
+
+            if (index < 0)
+                throw new ApplicationException(
+                    $"Connection failed to {destUriWithPort} through proxy server {proxyUri.ToString()}.");
+
+            return socketThruProxy;
+        }
+
         /// <summary>
         /// Connect to the specified endpoint and return a stream that can be used to communicate with it. (for initiator)
         /// </summary>
@@ -26,17 +69,25 @@ namespace QuickFix.Transport
         /// <returns>an opened and initiated stream which can be read and written to</returns>
         public static Stream CreateClientStream(IPEndPoint endpoint, SocketSettings settings, ILog logger)
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.NoDelay = settings.SocketNodelay;
-            if (settings.SocketReceiveBufferSize.HasValue)
+            // If system has configured a proxy for this config, use it.
+            Socket socket = CreateTunnelThruProxy(endpoint.Address.ToString(), endpoint.Port);
+
+            // No proxy.  Set up a regular socket.
+            if (socket == null)
             {
-                socket.ReceiveBufferSize = settings.SocketReceiveBufferSize.Value;
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.NoDelay = settings.SocketNodelay;
+                if (settings.SocketReceiveBufferSize.HasValue)
+                {
+                    socket.ReceiveBufferSize = settings.SocketReceiveBufferSize.Value;
+                }
+                if (settings.SocketSendBufferSize.HasValue)
+                {
+                    socket.SendBufferSize = settings.SocketSendBufferSize.Value;
+                }
+                socket.Connect(endpoint);
             }
-            if (settings.SocketSendBufferSize.HasValue)
-            {
-                socket.SendBufferSize = settings.SocketSendBufferSize.Value;
-            }
-            socket.Connect(endpoint);
+
             Stream stream = new NetworkStream(socket, true);
 
             if (settings.UseSSL)
@@ -82,19 +133,26 @@ namespace QuickFix.Transport
         /// <param name="name">The certificate path or DistinguishedName/subjectname if it should be loaded from the personal certificate store.</param>
         /// <param name="password">The certificate password.</param>
         /// <returns>The specified certificate, or null if no certificate is found</returns>
-        internal static X509Certificate2 LoadCertificate(string name, string password)
+        internal static X509Certificate2 LoadCertificate(ILog log, string name, string password)
         {
             X509Certificate2 certificate;
 
-            // TODO: Change to _certificateCache to ConcurrentDictorionary once we start targeting .NET 4
-            // Then remove this lock and use GetOrAdd function of concurrent dictionary
-            //  certificate = _certificateCache.GetOrAdd(name, (key) => LoadCertificateInner(name, password));
+            log.OnEvent("Environment.UserName: " + Environment.UserName);
+            log.OnEvent("System.Security.Principal.WindowsIdentity.GetCurrent().Name: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name);
+
+            // TODO: Change _certificateCache's type to ConcurrentDictionary once we start targeting .NET 4,
+            //   then remove this lock and use GetOrAdd function of concurrent dictionary
+            //   e.g.: certificate = _certificateCache.GetOrAdd(name, (key) => LoadCertificateInner(name, password));
             lock (_certificateCache)
             {
                 if (_certificateCache.TryGetValue(name, out certificate))
+                {
+                    log.OnEvent("Found SSL certification in cache: name: " + name + ": certificate: " + certificate.ToString());
                     return certificate;
+                }
+                log.OnEvent("SSL certificate was not found in cache: name: " + name);
 
-                certificate = LoadCertificateInner(name, password);
+                certificate = LoadCertificateInner(log, name, password);
 
                 if (certificate != null)
                     _certificateCache.Add(name, certificate);
@@ -109,17 +167,21 @@ namespace QuickFix.Transport
         /// <param name="name">The certificate path or DistinguishedName/subjectname if it should be loaded from the personal certificate store.</param>
         /// <param name="password">The certificate password.</param>
         /// <returns>The specified certificate, or null if no certificate is found</returns>
-        private static X509Certificate2 LoadCertificateInner(string name, string password)
+        private static X509Certificate2 LoadCertificateInner(ILog log, string name, string password)
         {
             X509Certificate2 certificate;
+
+            log.OnEvent("Loading SSL certificate: name: " + name);
 
             // If no extension is found try to get from certificate store
             if (!File.Exists(name))
             {
-                certificate = GetCertificateFromStore(name);
+                log.OnEvent("Loading SSL certificate from store: name: " + name);
+                certificate = GetCertificateFromStore(log, name);
             }
             else
             {
+                log.OnEvent("Loading SSL certificate from file: name: " + name);
                 if (password != null)
                     certificate = new X509Certificate2(name, password);
                 else
@@ -134,11 +196,16 @@ namespace QuickFix.Transport
         /// <remarks>See http://msdn.microsoft.com/en-us/library/system.security.cryptography.x509certificates.x509certificate2.aspx for complete example</remarks>
         /// <param name="certName">Name of the cert.</param>
         /// <returns></returns>
-        private static X509Certificate2 GetCertificateFromStore(string certName)
+        private static X509Certificate2 GetCertificateFromStore(ILog log, string certName)
         {
+            return GetCertificateFromStoreHelper(log, certName, new X509Store(StoreLocation.LocalMachine))
+                ?? GetCertificateFromStoreHelper(log, certName, new X509Store(StoreLocation.CurrentUser));
+        }
 
-            // Get the certificate store for the current user.
-            X509Store store = new X509Store(StoreLocation.CurrentUser);
+        private static X509Certificate2 GetCertificateFromStoreHelper(ILog log, string certName, X509Store store)
+        {
+            log.OnEvent("Loading SSL certificate from store: name: " + certName + ": location: " + store.Location.ToString());
+
             try
             {
                 store.Open(OpenFlags.ReadOnly);
@@ -150,21 +217,29 @@ namespace QuickFix.Transport
                 X509Certificate2Collection currentCerts = certCollection.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
 
                 if (certName.Contains("CN="))
+                {
+                    log.OnEvent("Finding SSL certificate by SubjectDistinguishedName: " + certName);
                     currentCerts = currentCerts.Find(X509FindType.FindBySubjectDistinguishedName, certName, false);
+                }
                 else
+                {
+                    log.OnEvent("Finding SSL certificate by SubjectName: " + certName);
                     currentCerts = currentCerts.Find(X509FindType.FindBySubjectName, certName, false);
+                }
+
+                log.OnEvent("SSL certificate count: " + currentCerts.Count);
 
                 if (currentCerts.Count == 0)
                     return null;
 
-                // Return the first certificate in the collection, has the right name and is current. 
+                log.OnEvent("Using SSL certificate: " + currentCerts[0].ToString());
+
                 return currentCerts[0];
             }
             finally
             {
                 store.Close();
             }
-
         }
 
 
@@ -191,12 +266,12 @@ namespace QuickFix.Transport
             /// <returns>a ssl enabled stream</returns>
             public Stream CreateClientStreamAndAuthenticate(Stream innerStream)
             {
-                var sslStream = new SslStream(innerStream, false, ValidateServerCertificate, SelectLocalCertificate);
+                SslStream sslStream = new SslStream(innerStream, false, ValidateServerCertificate, SelectLocalCertificate);
 
                 try
                 {
                     // Setup secure SSL Communication
-                    var clientCertificates = GetClientCertificates();
+                    X509CertificateCollection clientCertificates = GetClientCertificates();
                     sslStream.AuthenticateAsClient(socketSettings_.ServerCommonName,
                         clientCertificates,
                         socketSettings_.SslProtocol,
@@ -218,7 +293,7 @@ namespace QuickFix.Transport
             /// <returns>a ssl enabled stream</returns>
             public Stream CreateServerStreamAndAuthenticate(Stream innerStream)
             {
-                var sslStream = new SslStream(innerStream, false, ValidateClientCertificate, SelectLocalCertificate);
+                SslStream sslStream = new SslStream(innerStream, false, ValidateClientCertificate, SelectLocalCertificate);
 
                 try
                 {
@@ -226,7 +301,7 @@ namespace QuickFix.Transport
                         throw new Exception(string.Format("No server certificate specified, the {0} setting must be configured", SessionSettings.SSL_CERTIFICATE));
 
                     // Setup secure SSL Communication
-                    var serverCertificate = StreamFactory.LoadCertificate(socketSettings_.CertificatePath, socketSettings_.CertificatePassword);
+                    X509Certificate2 serverCertificate = StreamFactory.LoadCertificate(log_, socketSettings_.CertificatePath, socketSettings_.CertificatePassword);
                     sslStream.AuthenticateAsServer(serverCertificate,
                         socketSettings_.RequireClientCertificate,
                         socketSettings_.SslProtocol,
@@ -246,7 +321,7 @@ namespace QuickFix.Transport
                 if (!string.IsNullOrEmpty(socketSettings_.CertificatePath))
                 {
                     X509CertificateCollection certificates = new X509Certificate2Collection();
-                    var clientCert = StreamFactory.LoadCertificate(socketSettings_.CertificatePath, socketSettings_.CertificatePassword);
+                    X509Certificate2 clientCert = StreamFactory.LoadCertificate(log_, socketSettings_.CertificatePath, socketSettings_.CertificatePassword);
                     certificates.Add(clientCert);
                     return certificates;
                 }
@@ -314,7 +389,7 @@ namespace QuickFix.Transport
                     chain0.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
                     // add all your extra certificate chain
 
-                    chain0.ChainPolicy.ExtraStore.Add(StreamFactory.LoadCertificate(socketSettings_.CACertificatePath, null));
+                    chain0.ChainPolicy.ExtraStore.Add(StreamFactory.LoadCertificate(log_, socketSettings_.CACertificatePath, null));
                     chain0.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
                     bool isValid = chain0.Build((X509Certificate2)certificate);
 
@@ -354,8 +429,8 @@ namespace QuickFix.Transport
                 {
                     if (extension is X509EnhancedKeyUsageExtension)
                     {
-                        var keyUsage = (X509EnhancedKeyUsageExtension)extension;
-                        foreach (var oid in keyUsage.EnhancedKeyUsages)
+                        X509EnhancedKeyUsageExtension keyUsage = (X509EnhancedKeyUsageExtension)extension;
+                        foreach (System.Security.Cryptography.Oid oid in keyUsage.EnhancedKeyUsages)
                         {
                             if (oid.Value == enhancedKeyOid)
                                 return true;
@@ -395,7 +470,5 @@ namespace QuickFix.Transport
                 return localCertificates[0];
             }
         }
-
-
     }
 }
